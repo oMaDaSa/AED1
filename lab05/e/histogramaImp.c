@@ -46,20 +46,48 @@ void gera(histograma *h, const char *texto){
     tamanho = (int)strlen(texto);
     for(i = 0; i < tamanho; i++){
         pos = verifica(h, texto[i]);
-        if(pos > 0){
+        if(pos >= 0){
             h->qtd[pos]++;
         }else if(pos == -1){
             redimensiona(h);
             adicionaFim(h, texto[i]);
         }
     }
+    ordena(h);
 }
 
 void mostra(histograma *h){
-    int i;
+    int i, j;
     printf("{\n");
-    for(i = 0; i <h->tamanho; i++){
-        printf(" '%c' = %d\n",h->conteudo[i], h->qtd[i]);
+    for(i = 0; i < h->tamanho; i++){
+        printf(" '%c' = ",h->conteudo[i]);
+        for(j = 0; j < h->qtd[i]; j++){
+            printf("|");
+        }
+        printf("  %d\n", h->qtd[i]);
     }
     printf("}\n");
+}
+
+void ordena(histograma *h){
+    int i, j, min, tempi;
+    char tempc;
+
+    for (i = 0; i < h->tamanho-1; i++){
+        min = i;
+        for (j = i+1; j < h->tamanho; j++)
+            if (h->conteudo[j] < h->conteudo[min])
+                min = j;
+
+        if(min != i){
+            tempi = h->qtd[min];
+            tempc = h->conteudo[min];
+
+            h->conteudo[min] = h->conteudo[i];
+            h->conteudo[i] = tempc;
+
+            h->qtd[min] = h->qtd[i];
+            h->qtd[i] = tempi;
+        }
+    }
 }
